@@ -59,8 +59,37 @@
 
 .main_content{
     height: 1500px;
+    width: 990px; 
+    margin: auto; 
 }
 
+.when_movie{
+   
+}
+.main_content h1{
+    background:black;
+    border-style: solid;
+    border-width:0.5px;
+    border-color:red;
+    margin:20px 50px 20px 50px;
+    display:inline-block; 
+    font-size: 60px; 
+    color:white;
+    padding:20px 160px 20px 160px;
+}
+.main_content .column {
+    background-color: gray;
+    position: relative; 
+    float: left; 
+    width: 320px; height: 230px; 
+    margin: 30px 0px 30px 80px; 
+    padding-left:50px;
+    padding-right: 30px;
+    padding-top: 30px;}
+
+.when_movie .column p{
+    font-size: 30px; 
+}
 footer{
     background-color: black;
     color: whitesmoke;
