@@ -7,6 +7,10 @@
     padding-top: 0% !important;
 }
 
+.jumbotron h1{
+    font-size: 400%;
+}
+
 .jumbotron-image{
     padding: 30px;
     background-image: url(../src/img/main_banner.jpg);
@@ -57,11 +61,31 @@
     border-radius: 10px;
 }
 
-.main_content{
-    height: 1500px;
-    width: 990px; 
-    margin: auto; 
+footer{
+    background-color: black;
+    color: whitesmoke;
+    padding: 10px;
 }
+
+#footer_menu, #footer_info{
+    display: inline-table;
+    padding: 20px;
+    margin: 20px;
+    border: solid 1px whitesmoke;
+}
+
+#footer_menu a{
+    display: table-row;
+    height: 30px;
+    color: whitesmoke;
+}
+
+.main_content{
+    height: auto;
+    text-align: center;
+}
+
+/* 여기 위에 까지가 nav bar 에 필요한 css */
 
 .when_movie{
    

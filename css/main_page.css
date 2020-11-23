@@ -7,6 +7,10 @@
     padding-top: 0% !important;
 }
 
+.jumbotron h1{
+    font-size: 400%;
+}
+
 .jumbotron-image{
     padding: 30px;
     background-image: url(../src/img/main_banner.jpg);
@@ -57,10 +61,6 @@
     border-radius: 10px;
 }
 
-.main_content{
-    height: 1500px;
-}
-
 footer{
     background-color: black;
     color: whitesmoke;
@@ -68,7 +68,7 @@ footer{
 }
 
 #footer_menu, #footer_info{
-    display: inline-block;
+    display: inline-table;
     padding: 20px;
     margin: 20px;
     border: solid 1px whitesmoke;
@@ -78,4 +78,38 @@ footer{
     display: table-row;
     height: 30px;
     color: whitesmoke;
+}
+
+.main_content{
+    height: auto;
+    text-align: center;
+}
+
+/* 이제 여기 아래 부분은 main_page 에서만 해당하는 css */
+
+#recommended_movie, #movie_ranking{
+    margin-bottom: 50px;
+    margin-top: 10px;
+    display: inline-block;
+    width: fit-content;
+}
+
+#recommended_movie i, #movie_ranking i{
+    color: gold;
+}
+
+.card{
+    width: 200px;
+    height: 360px;
+    margin: 20px;
+    align-self: center;
+}
+
+.card-img-top{
+    width: 200px;
+    height: 267px;
+}
+
+.card-body{
+    padding: 5% !important;
 }
