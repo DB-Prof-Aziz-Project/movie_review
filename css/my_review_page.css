@@ -81,15 +81,12 @@ footer{
 }
 
 .main_content{
-    height: auto;
+    height: fit-content;
     text-align: center;
 }
 
 /* 여기 위에 까지가 nav bar 에 필요한 css */
 
-.when_movie{
-   
-}
 .main_content h1{
     background:black;
     border-style: solid;
@@ -104,31 +101,14 @@ footer{
 .main_content .column {
     background-color: gray;
     position: relative; 
-    float: left; 
+    display: inline-block;
+    /* float: left;  */
     width: 320px; height: 230px; 
-    margin: 30px 0px 30px 80px; 
-    padding-left:50px;
-    padding-right: 30px;
+    margin: 30px 10px 30px 10px; 
+    padding-left: 50px;
+    padding-right: 50px;
     padding-top: 30px;}
 
 .when_movie .column p{
     font-size: 30px; 
-}
-footer{
-    background-color: black;
-    color: whitesmoke;
-    padding: 10px;
-}
-
-#footer_menu, #footer_info{
-    display: inline-block;
-    padding: 20px;
-    margin: 20px;
-    border: solid 1px whitesmoke;
-}
-
-#footer_menu a{
-    display: table-row;
-    height: 30px;
-    color: whitesmoke;
 }
