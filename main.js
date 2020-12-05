@@ -18,10 +18,10 @@ var app = http.createServer(function(request,response){
     if(userStatus == ''){     //랜덤 추출 select cid from restaurant order by rand() limit 10
       db.query(`SELECT * FROM MOVIE ORDER BY RAND() LIMIT 6`, function(error, movies){
         db.query(`SELECT * FROM MOVIE ORDER BY M_AvgGrade DESC LIMIT 6`, function(error3, movies2){
-          var title = '나를 위한 추천영화';
-          var description = '회원 가입시 입력한 관심 장르를 기반으로 추천해드립니다';
-          var title2 = '오늘의 추천영화';
-          var description2 = '오늘 당신에게 보여주고 싶은 영화를 추천해드립니다';
+          var title = '오늘의 추천영화';
+          var description = '오늘의 영화를 추천해드립니다';
+          var title2 = '영화 순위 TOP 6';
+          var description2 = '오늘의 영화 TOP 6 를 알려드립니다';
           var list = template.movie_list(movies);
           var list2 = template.movie_list(movies2);
           var html = template.HTML(title, '',
@@ -61,7 +61,7 @@ var app = http.createServer(function(request,response){
         if(interest == ''){
           db.query(`SELECT * FROM MOVIE ORDER BY RAND() LIMIT 6`, function(error, movies){
             db.query(`SELECT * FROM MOVIE ORDER BY M_AvgGrade DESC LIMIT 6`, function(error3, movies2){
-              var title = '나를 위한 추천영화';
+              var title = '나만의 추천영화';
               var description = '회원 가입시 입력한 관심 장르를 기반으로 추천해 드립니다';
               var title2 = '오늘의 추천영화';
               var description2 = '오늘 당신에게 보여주고 싶은 영화를 추천해드립니다';
@@ -98,10 +98,10 @@ var app = http.createServer(function(request,response){
                 `, 
                 function(error, movies){
                   db.query(`SELECT * FROM MOVIE ORDER BY M_AvgGrade DESC LIMIT 6`, function(error3, movies2){
-                    var title = '나를 위한 추천영화';
-                    var description = '회원 가입시 입력한 관심 장르를 기반으로 추천해 드립니다';
+                    var title = '나만의 추천영화';
+                    var description = userStatus + ' 님의 관심 장르를 기반으로 추천해 드립니다';
                     var title2 = '오늘의 추천영화';
-                    var description2 = '오늘 당신에게 보여주고 싶은 영화를 추천해드립니다';
+                    var description2 = '오늘 영화 TOP 6 를 알려드립니다';
                     var list = template.movie_list(movies);
                     var list2 = template.movie_list(movies2);
                     var html = template.HTML(title, '',
@@ -136,22 +136,6 @@ var app = http.createServer(function(request,response){
           <input type="submit" style="visibility: hidden;">
         </p>
       </form>
-      <style>
-
-      * { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
-      *:before, *:after { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
-
-      /* Search styles */
-
-      #s { background: rgba(0,0,0,.375) url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAUCAYAAABvVQZ0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAQBJREFUeNqslI0RgyAMhdENWIEVWMEVXIGO0BW6Ah2hHcGOoCPYEewINFzBe9IA9id37w4kfEZesHHOCSYUqSPJML+RJlELDwN1pMHxMZNMkr8RTgyz2YPH5LmtwXpIHkOFmKhIlxowDmYAycKnHAHYcTCsSpXOJCie6YWDnXKLGeHLN2stGaqDsXXrX3GFcYcLrfhjtKEhffQ792gYT2nT6pJDjCw4z7ZGdGipOIqNbXIwFUARmCbKpMfYxsWJBmCEDoW7+gYUTAU2s3HJrK3AJvMLkqGHFLgWXTckm+SfSQexs+tLRqwVfgvjgMsvMAT689S5M/sk/I14kO5PAQYAuk6L1q+EdHMAAAAASUVORK5CYII=) no-repeat 14px 14px;
-         text-indent: 1em; display: inline-block; border: 0 none; width: 0; height: 3em; border-radius: 3em; -webkit-transition: .3s; transition: .3s; outline: none; padding: 1em 1.5em; cursor: pointer; -webkit-appearance: none; font-weight: inherit; font-size: inherit; font-family: inherit; color: #999; vertical-align: baseline; }
-      input[type=search]::-webkit-search-cancel-button { -webkit-appearance: none; }
-
-      #s:hover, #s:focus { background: #fff url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAUCAYAAABvVQZ0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAT5JREFUeNqsVLtOw0AQtIMlRJHCEhUVMg398QEUSZnSfILzCXxDPsFu6XAJHWnTcS1lWsprKdmLxtKwvjVBYaTV7cm+udnX5fPb+yyBSmwhVmK/FfPZLyjUPhI8YtXYi23EOovs7PzyevAbsWeoGg5HNUHsCipX8F9TZDOstVgLPxIsxW6w3sHv6dJ2StkLbh6IPtR/AWRfSIET20H9D2U1hfaAgxY2KMagcBSmg9/rmwx0lBqTzGfHoVfVHxXgXzCjHNRHnnHke4vMGc2q0RBR0GSeCLlpLaJGFWKUszVuib32nih7iTFrjXAPyGnQ48c3Gu5AOVlMtMk6NZuf+FiC+AIhV0T+pBQ5ntXceIJKqKko2duJ2TwoLAz5QTVnagJaXWEO8y/wSMuKH9RTJoCTHyNZFidOUEfNu/8WYAAOXUT04MOtlwAAAABJRU5ErkJggg==) 14px 14px no-repeat; }
-
-      #s:focus { width: 50%; cursor: text; }
-
-      </style>
       `,
       `<br>`,
       userStatus
@@ -176,6 +160,15 @@ var app = http.createServer(function(request,response){
             var list = '검색결과가 없습니다.';
             var html = template.HTML(title, list,
               `
+              <form action="/search_process" method="post">
+                <h1 class="h1_search">Search</h1>
+                <h6>관심있는 영화를 검색해보세요!</h6> <h6>영화 정보 뿐만 아니라 다른 사용자가 남긴 감상평과 평균별점을 볼 수 있습니다.</h6><br>
+                <p><input type="text" id='s' name="search" placeholder="검색어를 입력하세요"></p>
+                <p>
+                  <input type="submit" style="visibility: hidden;">
+                </p>
+              </form>
+              <br>
               <cont_title><h2>${title}</h2><h4>${description}</h4></cont_title>
               <br><br>
               `,
@@ -191,6 +184,15 @@ var app = http.createServer(function(request,response){
             var list = template.movie_list(movies);
             var html = template.HTML(title, list,
               `
+              <form action="/search_process" method="post">
+                <h1 class="h1_search">Search</h1>
+                <h6>관심있는 영화를 검색해보세요!</h6> <h6>영화 정보 뿐만 아니라 다른 사용자가 남긴 감상평과 평균별점을 볼 수 있습니다.</h6><br>
+                <p><input type="text" id='s' name="search" placeholder="검색어를 입력하세요"></p>
+                <p>
+                  <input type="submit" style="visibility: hidden;">
+                </p>
+              </form>
+              <br>
               <cont_title><h2>${title}</h2><h4>${description}</h4></cont_title>
               `,
               ``,
@@ -230,7 +232,7 @@ var app = http.createServer(function(request,response){
             var title = '장르별 모아보기';
             var description = '';
             var list_m = template.movie_list(movies);
-            var list_g = template.genre_list(genres);
+            var list_g = template.genre_list(genres, queryData.category);
             var html = template.HTML(title, list_m,
               `
               <h2>${title}</h2>${description}<br>
@@ -253,7 +255,13 @@ var app = http.createServer(function(request,response){
         db.query(`SELECT * FROM RECORD WHERE M_ID = ? ORDER BY R_Date DESC`, [queryData.id], function(error2, records){
           var list = template.one_eval_list(records);
           var movie_detail = template.movie_detail(movie);
-          var html = template.HTML(title, list, movie_detail,
+          var html = template.HTML(title, '', 
+          `
+          <div class="container-fluid">
+            ${movie_detail}
+            ${list}
+          </div>
+          `,
             ``,
             userStatus
           );
