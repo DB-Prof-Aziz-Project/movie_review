@@ -2,6 +2,7 @@ var http = require('http');
 var url = require('url');
 var qs = require('querystring');
 var sanitizeHtml = require('sanitize-html');
+var numeral = require('numeral');
 var db = require('./lib/db');
 var template = require('./lib/template.js');
 var dateUtils = require('date-utils');
@@ -49,7 +50,8 @@ var app = http.createServer(function(request,response){
             </style>
             `,
             ``,
-            userStatus
+            userStatus,
+            '#menu_main'
           );
           response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
           response.end(html);
@@ -57,7 +59,7 @@ var app = http.createServer(function(request,response){
       });
     }
     else{     //관심장르중에 랜덤 추출
-      db.query(`SELECT G_ID FROM INTEREST WHERE U_ID = ?`, [userStatus], function(error2, interest){
+      db.query(`SELECT G_ID FROM INTEREST WHERE U_ID = ? ORDER BY G_ID`, [userStatus], function(error2, interest){
         if(interest == ''){
           db.query(`SELECT * FROM MOVIE ORDER BY RAND() LIMIT 6`, function(error, movies){
             db.query(`SELECT * FROM MOVIE ORDER BY M_AvgGrade DESC LIMIT 6`, function(error3, movies2){
@@ -77,7 +79,8 @@ var app = http.createServer(function(request,response){
                 </div>
                 `,
                 ``,
-                userStatus
+                userStatus,
+                '#menu_main'
               );
               response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
               response.end(html);
@@ -112,7 +115,8 @@ var app = http.createServer(function(request,response){
                       ${list2}
                       `,
                       ``,
-                      userStatus
+                      userStatus,
+                      '#menu_main'
                     );
                     response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
                     response.end(html);
@@ -138,7 +142,8 @@ var app = http.createServer(function(request,response){
       </form>
       `,
       `<br>`,
-      userStatus
+      userStatus,
+      '#menu_search'
     );
     response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
     response.end(html);
@@ -173,7 +178,8 @@ var app = http.createServer(function(request,response){
               <br><br>
               `,
               ``,
-              userStatus
+              userStatus,
+              '#menu_search'
             );
             response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
             response.end(html);
@@ -196,7 +202,8 @@ var app = http.createServer(function(request,response){
               <cont_title><h2>${title}</h2><h4>${description}</h4></cont_title>
               `,
               ``,
-              userStatus
+              userStatus,
+              '#menu_search'
             );
             response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
             response.end(html);
@@ -219,7 +226,8 @@ var app = http.createServer(function(request,response){
               ${list_g}
               `,
               ``,
-              userStatus
+              userStatus,
+              '#menu_genre'
             );
             response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
             response.end(html);
@@ -239,7 +247,8 @@ var app = http.createServer(function(request,response){
               ${list_g}
               `,
               ``,
-              userStatus
+              userStatus,
+              '#menu_genre'
             );
             response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
             response.end(html);
@@ -294,7 +303,8 @@ var app = http.createServer(function(request,response){
               <input type="submit" value="delete">
             </form>
             `,
-            userStatus
+            userStatus,
+            '#menu_my'
           );
           response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
           response.end(html);
@@ -345,7 +355,8 @@ var app = http.createServer(function(request,response){
           </style>
           `,
           `<br>`,
-          userStatus
+          userStatus,
+          '#menu_review'
       );
       response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
       response.end(html);
@@ -409,7 +420,8 @@ var app = http.createServer(function(request,response){
             var html = template.HTML(title, list,
               `<h2>${title}</h2>${description}`,
               `<a href="/create_record">감상문쓰기</a>`,
-              userStatus
+              userStatus,
+              '#menu_review'
             );
             response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
             response.end(html);
@@ -423,7 +435,8 @@ var app = http.createServer(function(request,response){
         var html = template.HTML(title, list,
           `<h2>${title}</h2>${description}`,
           `<a href="/create_record">감상문쓰기</a>`,
-          userStatus
+          userStatus,
+          '#menu_review'
         );
         response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
         response.end(html);
@@ -456,7 +469,8 @@ var app = http.createServer(function(request,response){
           </form>
           `,
           `<br>`,
-          userStatus
+          userStatus,
+          '#menu_my'
       );
       response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
       response.end(html);
@@ -519,7 +533,8 @@ var app = http.createServer(function(request,response){
         var html = template.HTML(title, list,
           `<h2>${title}</h2>${description}`,
           `<a href="/create_record">감상문쓰기</a>`,
-          userStatus
+          userStatus,
+          '#menu_my'
         );
         response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
         response.end(html);
@@ -571,7 +586,7 @@ var app = http.createServer(function(request,response){
       response.end();
     }
     else {
-      db.query(`SELECT * FROM RECORD INNER JOIN MOVIE ON RECORD.M_ID = MOVIE.M_ID WHERE RECORD.U_ID = ?`, [userStatus], function(error, records){
+      db.query(`SELECT * FROM RECORD INNER JOIN MOVIE ON RECORD.M_ID = MOVIE.M_ID WHERE RECORD.U_ID = ? ORDER BY MOVIE.M_Name`, [userStatus], function(error, records){
         if(error){
           throw error;
         }
@@ -582,10 +597,25 @@ var app = http.createServer(function(request,response){
           var html = template.HTML(title, list,
             `
             <h2>내가 영화본 시간</h2>
-            ${description}
+            <h4>총 <strong>${description}</strong> 분</h4>
+            <div class="container-fluid">
+              <div class="my_if" style="display: inline-block;">
+                라면을 먹었다면<br>
+                ${(description/4).toFixed(0)} 개
+              </div>
+              <div class="my_if" style="display: inline-block;">
+                잠을 잤다면<br>
+                ${(description/480).toFixed(1)} 일
+              </div>
+              <div class="my_if" style="display: inline-block;">
+                알바를 했다면<br>
+                ${numeral(((description/60)*8590).toFixed(0)).format('0,0')} 원
+              </div>
+            </div>
             `,
             ``,
-            userStatus
+            userStatus,
+            '#menu_my'
           );
           response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
           response.end(html);
@@ -594,7 +624,7 @@ var app = http.createServer(function(request,response){
     }
   }
   else if(pathname === '/register'){      //회원가입 페이지
-    db.query(`SELECT * FROM GENRE`, function(error2, genres){
+    db.query(`SELECT * FROM GENRE ORDER BY G_ID`, function(error2, genres){
       var title = '회원가입';
       var list = '<br>';
       var list_g = template.genre_select_list(genres);
@@ -862,8 +892,8 @@ var app = http.createServer(function(request,response){
     response.writeHead(302, {Location: `/`, 'Content-Type':'text/html; charset=utf-8'});
     response.end();
   }
-  else if(pathname === '/mypage'){
-    db.query(`SELECT * FROM GENRE`, function(error, genres){
+  else if(pathname === '/mypage'){       //마이페이지 관심장르 수정
+    db.query(`SELECT * FROM GENRE ORDER BY G_ID`, function(error, genres){
       db.query(`SELECT * FROM INTEREST WHERE U_ID = ? ORDER BY G_ID`, [userStatus], function(error2, interest){
         var title = '내 관심장르 수정하기';
         var list = '<br>';
@@ -901,24 +931,30 @@ var app = http.createServer(function(request,response){
           throw error2;
         }
       });
-      var i = 1;
-      while(i < (post.genre.length)){
-        db.query(
-          `
-          INSERT INTO INTEREST (U_ID, G_ID) 
-          VALUES(?, ?)
-          `,
-          [userStatus, post.genre[i]], 
-          function(error2, result2){
-            if(error2){
-              throw error2;
-            }
-          }
-        );
-        i = i + 1;
+      if(post.genre == 'temp'){
+        response.writeHead(302, {Location: `/`, 'Content-Type':'text/html; charset=utf-8'});
+        response.end();
       }
-      response.writeHead(302, {Location: `/`, 'Content-Type':'text/html; charset=utf-8'});
-      response.end();
+      else{
+        var i = 1;
+        while(i < (post.genre.length)){
+          db.query(
+            `
+            INSERT INTO INTEREST (U_ID, G_ID) 
+            VALUES(?, ?)
+            `,
+            [userStatus, post.genre[i]], 
+            function(error2, result2){
+              if(error2){
+                throw error2;
+              }
+            }
+          );
+          i = i + 1;
+        }
+        response.writeHead(302, {Location: `/`, 'Content-Type':'text/html; charset=utf-8'});
+        response.end();
+      }
     });
   }
   else {

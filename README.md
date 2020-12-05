@@ -2,3 +2,4 @@
 * mysql
 * date-utils
 * sanitize-html
+* numeral
