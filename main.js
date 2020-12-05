@@ -16,8 +16,8 @@ var app = http.createServer(function(request,response){
 
   if(pathname === '/'){   //메인페이지
     if(userStatus == ''){     //랜덤 추출 select cid from restaurant order by rand() limit 10
-      db.query(`SELECT * FROM MOVIE ORDER BY RAND() LIMIT 5`, function(error, movies){
-        db.query(`SELECT * FROM MOVIE ORDER BY M_AvgGrade DESC LIMIT 5`, function(error3, movies2){
+      db.query(`SELECT * FROM MOVIE ORDER BY RAND() LIMIT 6`, function(error, movies){
+        db.query(`SELECT * FROM MOVIE ORDER BY M_AvgGrade DESC LIMIT 6`, function(error3, movies2){
           var title = '나를 위한 추천영화';
           var description = '회원 가입시 입력한 관심 장르를 기반으로 추천해드립니다';
           var title2 = '오늘의 추천영화';
@@ -26,10 +26,10 @@ var app = http.createServer(function(request,response){
           var list2 = template.movie_list(movies2);
           var html = template.HTML(title, '',
             `
-            <h2>${title}</h2><h4>${description}</h4>
+            <h2>${title}</h2><h4>${description}</h4><br>
             <p>${list}</p>
             <br>
-            <h2>${title2}</h2><h4>${description2}</h4>
+            <h2>${title2}</h2><h4>${description2}</h4><br>
             ${list2}
             <br>
       
@@ -59,8 +59,8 @@ var app = http.createServer(function(request,response){
     else{     //관심장르중에 랜덤 추출
       db.query(`SELECT G_ID FROM INTEREST WHERE U_ID = ?`, [userStatus], function(error2, interest){
         if(interest == ''){
-          db.query(`SELECT * FROM MOVIE ORDER BY RAND() LIMIT 5`, function(error, movies){
-            db.query(`SELECT * FROM MOVIE ORDER BY M_AvgGrade DESC LIMIT 5`, function(error3, movies2){
+          db.query(`SELECT * FROM MOVIE ORDER BY RAND() LIMIT 6`, function(error, movies){
+            db.query(`SELECT * FROM MOVIE ORDER BY M_AvgGrade DESC LIMIT 6`, function(error3, movies2){
               var title = '나를 위한 추천영화';
               var description = '회원 가입시 입력한 관심 장르를 기반으로 추천해 드립니다';
               var title2 = '오늘의 추천영화';
@@ -70,9 +70,9 @@ var app = http.createServer(function(request,response){
               var html = template.HTML(title, '',
                 `       
                 <div id="cont_title">
-                <h2>${title}</h2><h4>${description}</h4>
+                <h2>${title}</h2><h4>${description}</h4><br>
                 ${list}
-                <h2>${title2}</h2><h4>${description2}</h4>
+                <h2>${title2}</h2><h4>${description2}</h4><br>
                 ${list2}
                 </div>
                 `,
@@ -94,10 +94,10 @@ var app = http.createServer(function(request,response){
             i = i + 1;
           }
           db.query(`
-                SELECT * FROM MOVIE INNER JOIN BELONG ON MOVIE.M_ID = BELONG.M_ID ${q} ORDER BY RAND() LIMIT 5
+                SELECT * FROM MOVIE INNER JOIN BELONG ON MOVIE.M_ID = BELONG.M_ID ${q} ORDER BY RAND() LIMIT 6
                 `, 
                 function(error, movies){
-                  db.query(`SELECT * FROM MOVIE ORDER BY M_AvgGrade DESC LIMIT 5`, function(error3, movies2){
+                  db.query(`SELECT * FROM MOVIE ORDER BY M_AvgGrade DESC LIMIT 6`, function(error3, movies2){
                     var title = '나를 위한 추천영화';
                     var description = '회원 가입시 입력한 관심 장르를 기반으로 추천해 드립니다';
                     var title2 = '오늘의 추천영화';
@@ -106,9 +106,9 @@ var app = http.createServer(function(request,response){
                     var list2 = template.movie_list(movies2);
                     var html = template.HTML(title, '',
                       `
-                      <h2>${title}</h2><h4>${description}</h4>
+                      <h2>${title}</h2><h4>${description}</h4><br>
                       ${list}
-                      <h2>${title2}</h2><h4>${description2}</h4>
+                      <h2>${title2}</h2><h4>${description2}</h4><br>
                       ${list2}
                       `,
                       ``,
@@ -130,7 +130,7 @@ var app = http.createServer(function(request,response){
       `
       <form action="/search_process" method="post">
         <h1 class="h1_search">Search</h1>
-        <h6>관심있는 영화를 검색해보세요!</h6> <h6>영화 정보 뿐만 아니라 다른 사용자가 남긴 감상평과 평균별점을 볼 수 있습니다.</h6>
+        <h6>관심있는 영화를 검색해보세요!</h6> <h6>영화 정보 뿐만 아니라 다른 사용자가 남긴 감상평과 평균별점을 볼 수 있습니다.</h6><br>
         <p><input type="text" id='s' name="search" placeholder="검색어를 입력하세요"></p>
         <p>
           <input type="submit" style="visibility: hidden;">
@@ -177,6 +177,7 @@ var app = http.createServer(function(request,response){
             var html = template.HTML(title, list,
               `
               <cont_title><h2>${title}</h2><h4>${description}</h4></cont_title>
+              <br><br>
               `,
               ``,
               userStatus
@@ -677,8 +678,8 @@ var app = http.createServer(function(request,response){
     var list = '<br>';
     var html = template.HTML(title, list,
         `
-        <div class="height">
-        <div class="log-form">
+        <br><br><br>
+        <div class="log-form container">
         <h2>Login to your account</h2>
           <form action="/login_process" method="post">
             <input type="text" name="id" placeholder="username" />
@@ -686,7 +687,6 @@ var app = http.createServer(function(request,response){
             <button type="submit" class="btn">Login</button>
           </form>
         </div><!--end log form -->
-        </div>
    <style>
    @font-face {
     font-family: 'Open Sans';
@@ -721,25 +721,12 @@ var app = http.createServer(function(request,response){
   * {
     box-sizing: border-box;
   }
-  body {
-    font-family: 'open sans', helvetica, arial, sans;
-    background: url(http://farm8.staticflickr.com/7064/6858179818_5d652f531c_h.jpg) no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-  }
-  .height{
-    height:500px;
-  }
   .log-form {
+    padding: 0 !important;
     width: 40%;
     min-width: 320px;
     max-width: 475px;
     background: #fff;
-    position: absolute;
-    top: 50%;
-    left: 40%;
     -webkit-transform: translate(-10%, -10%);
     -moz-transform: translate(-10%, -10%);
     -o-transform: translate(-10%, -10%);
