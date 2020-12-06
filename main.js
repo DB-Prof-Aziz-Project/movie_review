@@ -41,11 +41,7 @@ var app = http.createServer(function(request,response){
               margin-top:20px;
               font-family: 'Do Hyeon', sans-serif;
               font-size:60px;}
-            h4{
-              
-              font-family: 'Noto Sans KR', sans-serif;
-            }
-            
+         
           
             </style>
             `,
@@ -296,23 +292,51 @@ var app = http.createServer(function(request,response){
           var record_detail = template.record_detail(record);
           var html = template.HTML(title, list, record_detail,
             ` 
-            <a href="/update_record?uid=${queryData.uid}&mid=${queryData.mid}">감상평 수정</a><p></p>
+            <button type="submit" class="btn"><a href="/update_record?uid=${queryData.uid}&mid=${queryData.mid}">감상평 수정</a></button><p></p>
             <form action="delete_record_process" method="post">
               <input type="hidden" name="uid" value="${queryData.uid}">
               <input type="hidden" name="mid" value="${queryData.mid}">
-              <input type="submit" value="감상평 지우기">
+              <button type="submit" class="btn">감상평 삭제</button>
             </form>
             <style>
             a{
               text-decoration: none;
               color: black;
-              font-size: 20px;
             }
             a:hover{
-            color: rgb(95, 95, 95);
-            text-decoration: none;
-            font-weight: bold;}
+              text-decoration: none;
+              color: white;
+           }
+            .btn {
+              background-color: #5c5c5c;
+              border: solid 3px #5c5c5c;
+              color: black;
+              padding: 10px 70px;
+              font-size: 15px;
+              font-family: 'Jeju Gothic', serif;
+              position: relative;
+              transition: all 300ms ease-in;
+            }
+            
+            .btn:hover {
+              color: white;
+              cursor: pointer;
+            }
+            
+            .btn:before {
+              content: "";
+              position: absolute;
+              background-color: #e7e5e4;
+              bottom: -1px;
+              left: -2px;
+              right: 100%;
+              top: 0;
+              z-index: -1;
+              transition: right 300ms ease-in;
+            }
+          
             </style>
+              
             `,
             userStatus,
             '#menu_my'
@@ -335,7 +359,7 @@ var app = http.createServer(function(request,response){
           <form action="/create_record_process" method="post">
          
             <input type="hidden" name="id" value="${userStatus}"/>
-           <p> 영화 목록 </p>
+           <p1> 영화 목록 </p1>
             <p>
             
             <div class="select">
@@ -359,14 +383,16 @@ var app = http.createServer(function(request,response){
               <textarea name="Eval" placeholder="감상문" style="border: 1px solid #BBB; color:#444" rows="3" cols="80"></textarea>
             </p>
             <p>
-              <input type="submit">
+            <button type="submit" class="btn">저장하기</button>
             </p>
           </form>
 
           <style>
-          p1{
-            font-family: 'Noto Sans KR', sans-serif;
-            font-siza:15px;
+          @import url(http://fonts.googleapis.com/earlyaccess/jejugothic.css);
+          @import url('https://fonts.googleapis.com/css?family=Raleway');
+          p1{                        
+            font-family: 'Jeju Gothic', serif;
+            font-size:15px;
           }
 
           .select {
@@ -421,7 +447,40 @@ var app = http.createServer(function(request,response){
             font-size:1em;
             line-height:1.5em;
             vertical-align:middle; 
+            border: none;
           }
+          .btn {
+            background-color: #5c5c5c;
+            border: solid 3px #5c5c5c;
+            color: black;
+            padding: 10px 70px;
+            font-size: 15px;
+            font-family: 'Jeju Gothic', serif;
+            position: relative;
+            transition: all 300ms ease-in;
+          }
+          
+          .btn:hover {
+            color: white;
+            cursor: pointer;
+          }
+          
+          .btn:before {
+            content: "";
+            position: absolute;
+            background-color: #e7e5e4;
+            bottom: -1px;
+            left: -2px;
+            right: 100%;
+            top: 0;
+            z-index: -1;
+            transition: right 300ms ease-in;
+          }
+          
+          .btn:hover:before {
+            right: 0;
+          }
+          
           </style>
           `,
           `<br>`,
@@ -489,7 +548,21 @@ var app = http.createServer(function(request,response){
             var list = '';
             var html = template.HTML(title, list,
               `<h2>${title}</h2>${description}`,
-              `<a href="/create_record">감상문쓰기</a>`,
+              `<a href="/create_record">감상문쓰기</a>
+              <br>
+              <style>
+              a{
+                text-decoration: none;
+                color: black;
+                font-size: 20px;
+              }
+              a:hover{
+                color: rgb(95, 95, 95);
+                text-decoration: none;
+                font-weight: bold;
+              }
+              </style>
+              `,
               userStatus,
               '#menu_review'
             );
@@ -504,7 +577,21 @@ var app = http.createServer(function(request,response){
         var list = '';
         var html = template.HTML(title, list,
           `<h2>${title}</h2>${description}`,
-          `<a href="/create_record">감상문쓰기</a>`,
+          `<br>
+          <a href="/create_record">감상문쓰기</a>
+          
+          <style>
+          a{
+            text-decoration: none;
+            color: black;
+            font-size: 20px;
+          }
+          a:hover{
+            color: rgb(95, 95, 95);
+            text-decoration: none;
+            font-weight: bold;
+          }
+          </style>`,
           userStatus,
           '#menu_review'
         );
@@ -534,7 +621,7 @@ var app = http.createServer(function(request,response){
               <textarea name="Eval" placeholder="감상문" style="border: 1px solid #BBB; color:#444" rows="3" cols="80">${record[0].R_Eval}</textarea>
             </p>
             <p>
-              <input type="submit">
+               <button type="submit" class="btn">Login</button>
             </p>
           </form>
           <style>
@@ -546,6 +633,7 @@ var app = http.createServer(function(request,response){
             font-size:1em;
             line-height:1.5em;
             vertical-align:middle; 
+            border: none;
           }
           </style>
           `,
@@ -613,7 +701,20 @@ var app = http.createServer(function(request,response){
         var list = '';
         var html = template.HTML(title, list,
           `<h2>${title}</h2>${description}`,
-          `<a href="/create_record">감상문쓰기</a>`,
+          `<p></p><a href="/create_record">감상문쓰기</a>
+          <style>
+          a{
+            text-decoration: none;
+            color: black;
+            font-size: 20px;
+          }
+        
+          a:hover{
+            color: rgb(95, 95, 95);
+            text-decoration: none;
+            font-weight: bold;
+          }
+          </style>`,
           userStatus,
           '#menu_my'
         );
@@ -678,31 +779,47 @@ var app = http.createServer(function(request,response){
           var html = template.HTML(title, list,
             `
             <h2>내가 영화 본 시간</h2>
-            <h4>총 <strong>${description}</strong> 분</h4>
+            <h4>총 <a style="color:#5c5c5c"><strong>${description}</strong></a> 분</h4>
             <div class="container-fluid">
               <div class="my_if" style="display: inline-block;">
                 <p>라면을 먹었다면</p>
+                <img src="https://www.flaticon.com/svg/static/icons/svg/723/723712.svg "height="100" width="100">
+                <p></p>
                 <h3>${(description/4).toFixed(0)}  개</h3>
+                <p></p>
               </div>
               <div class="my_if" style="display: inline-block;">
               <p>잠을 잤다면</p>
+              <img src="https://www.flaticon.com/svg/static/icons/svg/865/865813.svg"height="100" width="100">
+                <p></p>
                 <h3>${(description/480).toFixed(1)}  일</h3>
+                <p></p>
               </div>
               <div class="my_if" style="display: inline-block;">
               <p>알바를 했다면</p>
+              <img src="https://www.flaticon.com/svg/static/icons/svg/3595/3595942.svg "height="100" width="100">
+                <p></p>
                 <h3> ${numeral(((description/60)*8590).toFixed(0)).format('0,0')}  원</h3>
+                <p></p>
               </div>
             </div>
             <style>
+            img{
+              box-shadow:none;
+            }
             h4{
+        
             font-size:50px;
             text-shadow: 2px 2px 6px gray;
             }
+        
             h3{
               font-weight: bolder;
               text-size:60px;
               text-shadow: 2px 2px 6px rgba(255, 255, 255, .75);;
             }
+        
+            
             </style>
 
             `,
@@ -723,6 +840,8 @@ var app = http.createServer(function(request,response){
       var list_g = template.genre_select_list(genres);
       var html = template.HTML(title, list,
         `
+        <h2>${title}</h2>
+        <br>
         <form action="/register_process" method="post">
           <h7>아이디 <br></h7>  
           <p><input type="text" id="id" name="id" placeholder="아이디" style=background:#ccc;></p>
@@ -749,10 +868,15 @@ var app = http.createServer(function(request,response){
             ${list_g}
           </p>
           <p>
-            <input type="submit">
+          <button type="submit" class="btn">회원가입</button>
           </p>
         </form>
         <style>
+        h2{        
+          margin-top:20px;
+          font-family: 'Do Hyeon', sans-serif;
+          font-size:60px;}
+
         .control__indicator {
           position: absolute;
           top: 2px;
@@ -793,6 +917,34 @@ var app = http.createServer(function(request,response){
           font-family: 'Do Hyeon', sans-serif;
           font-weight:bolder;
         }
+        .btn {
+          background-color: #5c5c5c;
+          border: solid 3px #5c5c5c;
+          color: black;
+          padding: 10px 70px;
+          font-size: 15px;
+          font-family: 'Jeju Gothic', serif;
+          position: relative;
+          transition: all 300ms ease-in;
+        }
+        
+        .btn:hover {
+          color: white;
+          cursor: pointer;
+        }
+        
+        .btn:before {
+          content: "";
+          position: absolute;
+          background-color: #e7e5e4;
+          bottom: -1px;
+          left: -2px;
+          right: 100%;
+          top: 0;
+          z-index: -1;
+          transition: right 300ms ease-in;
+        }
+      
         </style>
 
         `,
@@ -844,7 +996,21 @@ var app = http.createServer(function(request,response){
               var list = '';
               var html = template.HTML(title, list,
                 `<h2>${title}</h2>${description}`,
-                `<a href="/register">회원가입</a>`
+                `<p></p>
+                <a href="/register">회원가입</a>
+                <style>
+                a{
+                  text-decoration: none;
+                  color: black;
+                  font-size: 20px;
+                }
+              
+                a:hover{
+                  color: rgb(95, 95, 95);
+                  text-decoration: none;
+                  font-weight: bold;
+                }
+                </style>`
               );
               response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
               response.end(html);
@@ -1003,7 +1169,20 @@ var app = http.createServer(function(request,response){
             var list = '';
             var html = template.HTML(title, list,
               `<h2>${title}</h2>${description}`,
-              `<a href="/login">로그인</a>`
+              `<p></p><a href="/login">로그인</a>
+              <style>
+              a{
+                text-decoration: none;
+                color: black;
+                font-size: 20px;
+              }
+            
+              a:hover{
+                color: rgb(95, 95, 95);
+                text-decoration: none;
+                font-weight: bold;
+              }
+              </style>`
             );
             response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
             response.end(html);
@@ -1019,7 +1198,20 @@ var app = http.createServer(function(request,response){
             var list = '';
             var html = template.HTML(title, list,
               `<h2>${title}</h2>${description}`,
-              `<a href="/login">로그인</a>`
+              `<p></p><a href="/login">로그인</a>
+              <style>
+              a{
+                text-decoration: none;
+                color: black;
+                font-size: 20px;
+              }
+            
+              a:hover{
+                color: rgb(95, 95, 95);
+                text-decoration: none;
+                font-weight: bold;
+              }
+              </style>`
             );
             response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
             response.end(html);
@@ -1047,9 +1239,39 @@ var app = http.createServer(function(request,response){
               ${list_i}
             </p>
             <p>
-              <input type="submit">
+            <button type="submit" class="btn">수정하기</button>
             </p>
           </form>
+          <style>
+          .btn {
+            background-color: #5c5c5c;
+            border: solid 3px #5c5c5c;
+            color: black;
+            padding: 10px 70px;
+            font-size: 15px;
+            font-family: 'Jeju Gothic', serif;
+            position: relative;
+            transition: all 300ms ease-in;
+          }
+          
+          .btn:hover {
+            color: white;
+            cursor: pointer;
+          }
+          
+          .btn:before {
+            content: "";
+            position: absolute;
+            background-color: #e7e5e4;
+            bottom: -1px;
+            left: -2px;
+            right: 100%;
+            top: 0;
+            z-index: -1;
+            transition: right 300ms ease-in;
+          }
+        
+          </style>
           `,
           `<br>`,
           userStatus
