@@ -296,12 +296,23 @@ var app = http.createServer(function(request,response){
           var record_detail = template.record_detail(record);
           var html = template.HTML(title, list, record_detail,
             ` 
-            <a href="/update_record?uid=${queryData.uid}&mid=${queryData.mid}">update</a>
+            <a href="/update_record?uid=${queryData.uid}&mid=${queryData.mid}">감상평 수정</a><p></p>
             <form action="delete_record_process" method="post">
               <input type="hidden" name="uid" value="${queryData.uid}">
               <input type="hidden" name="mid" value="${queryData.mid}">
-              <input type="submit" value="delete">
+              <input type="submit" value="감상평 지우기">
             </form>
+            <style>
+            a{
+              text-decoration: none;
+              color: black;
+              font-size: 20px;
+            }
+            a:hover{
+            color: rgb(95, 95, 95);
+            text-decoration: none;
+            font-weight: bold;}
+            </style>
             `,
             userStatus,
             '#menu_my'
@@ -326,21 +337,26 @@ var app = http.createServer(function(request,response){
             <input type="hidden" name="id" value="${userStatus}"/>
            <p> 영화 목록 </p>
             <p>
+            
+            <div class="select">
               <select name="movie">
                 <option value="">영화선택</option>
                 ${movie_select_list}
               </select>
+              <div class="select__arrow"></div>
+              </div>
+           
             </p>
-            <p1> 평점</p1>  <br>
+           <p1> 평점</p1> <p> </p> 
             <p><input oninput='ShowSliderValue(this.value)' type="range" name="grade" min="0" max="5" step="0.5">
             <font size=4 id = "slider_value_view">2.5</font></p>
-            <p1>한줄평 </p1><br>
+            <p1>한줄평 </p1><p> </p> 
             <p>
-              <textarea name="One_Eval" placeholder="한줄평"></textarea>
+              <textarea name="One_Eval" placeholder="한줄평" style="border: 1px solid #BBB; color:#444" rows="3" cols="80"></textarea>
             </p>
-            <p1>감상문 </p1>: <br>
+            <p1>감상문 </p1><p> </p> 
             <p>
-              <textarea name="Eval" placeholder="감상문"></textarea>
+              <textarea name="Eval" placeholder="감상문" style="border: 1px solid #BBB; color:#444" rows="3" cols="80"></textarea>
             </p>
             <p>
               <input type="submit">
@@ -351,6 +367,60 @@ var app = http.createServer(function(request,response){
           p1{
             font-family: 'Noto Sans KR', sans-serif;
             font-siza:15px;
+          }
+
+          .select {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 15px;
+            width: 50%;
+          }
+          .select select {
+            display: inline-block;
+            width: 100%;
+            cursor: pointer;
+            padding: 10px 15px;
+            outline: 0;
+            border: 0;
+            border-radius: 0;
+            background: #ccc;
+            color: 939393;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+          }
+          .select select::-ms-expand {
+            display: none;
+          }
+          .select select:hover,
+          .select select:focus {
+            color: #000;
+            background: #e6e6e6;
+          }
+          .select__arrow {
+            position: absolute;
+            top: 16px;
+            right: 15px;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+            border-style: solid;
+            border-width: 8px 5px 0 5px;
+            border-color: #7b7b7b transparent transparent transparent;
+          }
+          .select select:hover ~ .select__arrow,
+          .select select:focus ~ .select__arrow {
+            border-top-color: #000;
+          }
+
+          textarea{
+            background:#ccc; 
+            padding:1em; 
+            width:50%;
+            height:10em;
+            font-size:1em;
+            line-height:1.5em;
+            vertical-align:middle; 
           }
           </style>
           `,
@@ -452,21 +522,32 @@ var app = http.createServer(function(request,response){
           <form action="/update_record_process" method="post">
             <input type="hidden" name="id" value="${queryData.uid}"/>
             <input type="hidden" name="movie" value="${queryData.mid}"/>
-            평점 : <br>
+            평점 <p></p>
             <p><input oninput='ShowSliderValue(this.value)' type="range" name="grade" min="0" max="5" step="0.5" value="${record[0].R_Grade}" />
             <font size=4 id = "slider_value_view">${record[0].R_Grade}</font></p>
-            한줄평 : <br>
+            한줄평 <p></p>
             <p>
-              <textarea name="One_Eval" placeholder="한줄평">${record[0].R_One_Eval}</textarea>
+              <textarea name="One_Eval" placeholder="한줄평" style="border: 1px solid #BBB; color:#444" rows="3" cols="80">${record[0].R_One_Eval}</textarea>
             </p>
-            감상문 : <br>
+            감상문 <p></p>
             <p>
-              <textarea name="Eval" placeholder="한줄평">${record[0].R_Eval}</textarea>
+              <textarea name="Eval" placeholder="감상문" style="border: 1px solid #BBB; color:#444" rows="3" cols="80">${record[0].R_Eval}</textarea>
             </p>
             <p>
               <input type="submit">
             </p>
           </form>
+          <style>
+          textarea{
+            background:#ccc; 
+            padding:1em; 
+            width:50%;
+            height:10em;
+            font-size:1em;
+            line-height:1.5em;
+            vertical-align:middle; 
+          }
+          </style>
           `,
           `<br>`,
           userStatus,
@@ -596,22 +677,34 @@ var app = http.createServer(function(request,response){
           var list = template.my_record_list(records);
           var html = template.HTML(title, list,
             `
-            <h2>내가 영화본 시간</h2>
+            <h2>내가 영화 본 시간</h2>
             <h4>총 <strong>${description}</strong> 분</h4>
             <div class="container-fluid">
               <div class="my_if" style="display: inline-block;">
-                라면을 먹었다면<br>
-                ${(description/4).toFixed(0)} 개
+                <p>라면을 먹었다면</p>
+                <h3>${(description/4).toFixed(0)}  개</h3>
               </div>
               <div class="my_if" style="display: inline-block;">
-                잠을 잤다면<br>
-                ${(description/480).toFixed(1)} 일
+              <p>잠을 잤다면</p>
+                <h3>${(description/480).toFixed(1)}  일</h3>
               </div>
               <div class="my_if" style="display: inline-block;">
-                알바를 했다면<br>
-                ${numeral(((description/60)*8590).toFixed(0)).format('0,0')} 원
+              <p>알바를 했다면</p>
+                <h3> ${numeral(((description/60)*8590).toFixed(0)).format('0,0')}  원</h3>
               </div>
             </div>
+            <style>
+            h4{
+            font-size:50px;
+            text-shadow: 2px 2px 6px gray;
+            }
+            h3{
+              font-weight: bolder;
+              text-size:60px;
+              text-shadow: 2px 2px 6px rgba(255, 255, 255, .75);;
+            }
+            </style>
+
             `,
             ``,
             userStatus,
@@ -631,29 +724,77 @@ var app = http.createServer(function(request,response){
       var html = template.HTML(title, list,
         `
         <form action="/register_process" method="post">
-          아이디 : <br>
-          <p><input type="text" name="id" placeholder="아이디"></p>
-          비밀번호 : <br>
-          <p><input type="password" name="pwd" placeholder="비밀번호"></p>
-          이름 : <br>
-          <p><input type="text" name="name" placeholder="이름"></p>
-          성별 : <br>
+          <h7>아이디 <br></h7>  
+          <p><input type="text" id="id" name="id" placeholder="아이디" style=background:#ccc;></p>
+          <h7>비밀번호 <br></h7> 
+          <p><input type="password" id="pwd" name="pwd" placeholder="비밀번호"style=background:#ccc;></p>
+          <h7>이름  <br></h7>
+          <p><input type="text" id="name" name="name" placeholder="이름"style=background:#ccc;></p>
+          <h7>성별  <br></h7>
           <input type="radio" id="male" name="sex" value="1">
-          <label for="male">남</label><br>
+          <label class="control control--radio" for="male">남
+          <div class="control__indicator"></div>
+          </label><br>
           <input type="radio" id="female" name="sex" value="0">
-          <label for="female">여</label><br>
-          생년월일 : <br>
-          <p><input type="date" name="birth" placeholder="생년월일"></p>
-          이메일 : <br>
-          <p><input type="email" name="email" placeholder="이메일"></p>
-          관심장르 : <br>
+          <label class="control control--radio" for="female">여
+          <div class="control__indicator"></div>
+          </label><br>
+          <h7>생년월일 <br></h7>
+          <p><input type="date" id="birth" name="birth" placeholder="생년월일"style=background:#ccc;></p>
+          <h7> 이메일  <br></h7>
+          <p><input type="email" id="email" name="email" placeholder="이메일"style=background:#ccc;></p>
+          <h7>관심장르 <br></h7>
           <p>
+          
             ${list_g}
           </p>
           <p>
             <input type="submit">
           </p>
         </form>
+        <style>
+        .control__indicator {
+          position: absolute;
+          top: 2px;
+          left: 0;
+          height: 20px;
+          width: 20px;
+          background: #e6e6e6;
+        }
+        .control--radio .control__indicator {
+          border-radius: 50%;
+        }
+        .control:hover input ~ .control__indicator,
+        .control input:focus ~ .control__indicator {
+          background: #a3a3a3;
+        }
+        .control input:checked ~ .control__indicator {
+          background: #a3a3a3;
+        }
+        .control__indicator:after {
+          content: '';
+          position: absolute;
+          display: none;
+        }
+        .control input:checked ~ .control__indicator:after {
+          display: block;
+        }
+        .control--checkbox .control__indicator:after {
+          left: 8px;
+          top: 4px;
+          width: 3px;
+          height: 8px;
+          border: solid #fff;
+          border-width: 0 2px 2px 0;
+          transform: rotate(45deg);
+        }
+        h7{
+          font-size:20px;
+          font-family: 'Do Hyeon', sans-serif;
+          font-weight:bolder;
+        }
+        </style>
+
         `,
         `<br>`
       );
@@ -820,18 +961,17 @@ var app = http.createServer(function(request,response){
   }
   .log-form .btn {
     display: inline-block;
-    background: #1fb5bf;
-    border: 1px solid #1ba0a9;
+    background: #404040;
     padding: 0.5em 2em;
     color: white;
     margin-right: 0.5em;
     box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.2);
   }
   .log-form .btn:hover {
-    background: #23cad5;
+    background: #505050;
   }
   .log-form .btn:active {
-    background: #1fb5bf;
+    background: #505050;
     box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.1);
   }
   .log-form .btn:focus {
