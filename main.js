@@ -264,7 +264,12 @@ var app = http.createServer(function(request,response){
           `
           <div class="container-fluid">
             ${movie_detail}
+            <p></p>
+            <br>
+            
             ${list}
+            <br>
+            <br>
           </div>
           `,
             ``,
@@ -376,11 +381,11 @@ var app = http.createServer(function(request,response){
             <font size=4 id = "slider_value_view">2.5</font></p>
             <p1>한줄평 </p1><p> </p> 
             <p>
-              <textarea name="One_Eval" placeholder="한줄평" style="border: 1px solid #BBB; color:#444" rows="3" cols="80"></textarea>
+              <textarea class="one_line" name="One_Eval" placeholder="한줄평"  style="border: 1px solid #BBB; color:#444" rows="1" cols="80"></textarea>
             </p>
             <p1>감상문 </p1><p> </p> 
             <p>
-              <textarea name="Eval" placeholder="감상문" style="border: 1px solid #BBB; color:#444" rows="3" cols="80"></textarea>
+              <textarea class="s_line" name="Eval" placeholder="감상문" style="border: 1px solid #BBB; color:#444" rows="6" cols="80"></textarea>
             </p>
             <p>
             <button type="submit" class="btn">저장하기</button>
@@ -390,6 +395,26 @@ var app = http.createServer(function(request,response){
           <style>
           @import url(http://fonts.googleapis.com/earlyaccess/jejugothic.css);
           @import url('https://fonts.googleapis.com/css?family=Raleway');
+          .one_line{
+            background:#ccc; 
+            padding:1em; 
+            width:50%;
+            height:5em;
+            font-size:1em;
+            line-height:1.5em;
+            vertical-align:middle; 
+            border: none;
+          }
+         .s_line{
+            background:#ccc; 
+            padding:1em; 
+            width:50%;
+            height:20em;
+            font-size:1em;
+            line-height:1.5em;
+            vertical-align:middle; 
+            border: none;
+          }
           p1{                        
             font-family: 'Jeju Gothic', serif;
             font-size:15px;
@@ -439,16 +464,7 @@ var app = http.createServer(function(request,response){
             border-top-color: #000;
           }
 
-          textarea{
-            background:#ccc; 
-            padding:1em; 
-            width:50%;
-            height:10em;
-            font-size:1em;
-            line-height:1.5em;
-            vertical-align:middle; 
-            border: none;
-          }
+         
           .btn {
             background-color: #5c5c5c;
             border: solid 3px #5c5c5c;
@@ -609,31 +625,68 @@ var app = http.createServer(function(request,response){
           <form action="/update_record_process" method="post">
             <input type="hidden" name="id" value="${queryData.uid}"/>
             <input type="hidden" name="movie" value="${queryData.mid}"/>
-            평점 <p></p>
-            <p><input oninput='ShowSliderValue(this.value)' type="range" name="grade" min="0" max="5" step="0.5" value="${record[0].R_Grade}" />
-            <font size=4 id = "slider_value_view">${record[0].R_Grade}</font></p>
-            한줄평 <p></p>
+            <p1> 평점</p1> <p> </p> 
+            <p><input oninput='ShowSliderValue(this.value)' type="range" name="grade" min="0" max="5" step="0.5">
+            <font size=4 id = "slider_value_view">2.5</font></p>
+            <p1>한줄평 </p1><p> </p> 
             <p>
-              <textarea name="One_Eval" placeholder="한줄평" style="border: 1px solid #BBB; color:#444" rows="3" cols="80">${record[0].R_One_Eval}</textarea>
+              <textarea class="one_line" name="One_Eval" placeholder="한줄평" style="border: 1px solid #BBB; color:#444" rows="1" cols="80"></textarea>
             </p>
-            감상문 <p></p>
+            <p1>감상문 </p1><p> </p> 
             <p>
-              <textarea name="Eval" placeholder="감상문" style="border: 1px solid #BBB; color:#444" rows="3" cols="80">${record[0].R_Eval}</textarea>
+              <textarea class="s_line" name="Eval" placeholder="감상문"  style="border: 1px solid #BBB; color:#444" rows="6" cols="80"></textarea>
             </p>
             <p>
-               <button type="submit" class="btn">Login</button>
+               <button type="submit" class="btn">감상평 수정</button>
             </p>
           </form>
           <style>
-          textarea{
+          .one_line{
             background:#ccc; 
             padding:1em; 
             width:50%;
-            height:10em;
+            height:5em;
             font-size:1em;
             line-height:1.5em;
             vertical-align:middle; 
             border: none;
+          }
+         .s_line{
+            background:#ccc; 
+            padding:1em; 
+            width:50%;
+            height:20em;
+            font-size:1em;
+            line-height:1.5em;
+            vertical-align:middle; 
+            border: none;
+          }
+          .btn {
+            background-color: #5c5c5c;
+            border: solid 3px #5c5c5c;
+            color: black;
+            padding: 10px 70px;
+            font-size: 15px;
+            font-family: 'Jeju Gothic', serif;
+            position: relative;
+            transition: all 300ms ease-in;
+          }
+          
+          .btn:hover {
+            color: white;
+            cursor: pointer;
+          }
+          
+          .btn:before {
+            content: "";
+            position: absolute;
+            background-color: #e7e5e4;
+            bottom: -1px;
+            left: -2px;
+            right: 100%;
+            top: 0;
+            z-index: -1;
+            transition: right 300ms ease-in;
           }
           </style>
           `,
