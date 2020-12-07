@@ -218,6 +218,7 @@ var app = http.createServer(function(request,response){
             var list_g = template.genre_list(genres);
             var html = template.HTML(title, list_m,
               `
+              <a name="genre_head" />
               <h2>${title}</h2><h4>${description}</h4><br>
               ${list_g}
               `,
@@ -239,6 +240,7 @@ var app = http.createServer(function(request,response){
             var list_g = template.genre_list(genres, queryData.category);
             var html = template.HTML(title, list_m,
               `
+              <a name="genre_head" />
               <h2>${title}</h2>${description}<br>
               ${list_g}
               `,
@@ -297,51 +299,13 @@ var app = http.createServer(function(request,response){
           var record_detail = template.record_detail(record);
           var html = template.HTML(title, list, record_detail,
             ` 
-            <button type="submit" class="btn"><a href="/update_record?uid=${queryData.uid}&mid=${queryData.mid}">감상평 수정</a></button><p></p>
+            <button type="button" onclick="location.href='/update_record?uid=${queryData.uid}&mid=${queryData.mid}'" class="btn">감상평 수정</button>
+            <p></p>
             <form action="delete_record_process" method="post">
               <input type="hidden" name="uid" value="${queryData.uid}">
               <input type="hidden" name="mid" value="${queryData.mid}">
               <button type="submit" class="btn">감상평 삭제</button>
             </form>
-            <style>
-            a{
-              text-decoration: none;
-              color: black;
-            }
-            a:hover{
-              text-decoration: none;
-              color: white;
-           }
-            .btn {
-              background-color: #5c5c5c;
-              border: solid 3px #5c5c5c;
-              color: black;
-              padding: 10px 70px;
-              font-size: 15px;
-              font-family: 'Jeju Gothic', serif;
-              position: relative;
-              transition: all 300ms ease-in;
-            }
-            
-            .btn:hover {
-              color: white;
-              cursor: pointer;
-            }
-            
-            .btn:before {
-              content: "";
-              position: absolute;
-              background-color: #e7e5e4;
-              bottom: -1px;
-              left: -2px;
-              right: 100%;
-              top: 0;
-              z-index: -1;
-              transition: right 300ms ease-in;
-            }
-          
-            </style>
-              
             `,
             userStatus,
             '#menu_my'
@@ -353,159 +317,129 @@ var app = http.createServer(function(request,response){
     }
   }
   else if(pathname === '/create_record'){      //감상평 남기기 페이지
-    db.query(`SELECT * FROM MOVIE ORDER BY M_Name`, function(error, movies){
-      var title = '감상평 남기기';
-      var list = '<br>';
-      var movie_select_list = template.movie_select_list(movies);
-      var html = template.HTML(title, list,
-          `
-          <h2>${title}</h2>
-          <h4>영화의 감상평과 평점을 남기고 공유해보세요!</h4>
-          <form action="/create_record_process" method="post">
-         
-            <input type="hidden" name="id" value="${userStatus}"/>
-           <p1> 영화 목록 </p1>
-            <p>
-            
-            <div class="select">
-              <select name="movie">
-                <option value="">영화선택</option>
-                ${movie_select_list}
-              </select>
-              <div class="select__arrow"></div>
-              </div>
+    if(userStatus === ''){
+      response.writeHead(302, {Location: `/login`, 'Content-Type':'text/html; charset=utf-8'});
+      response.end();
+    }
+    else{
+      db.query(`SELECT * FROM MOVIE ORDER BY M_Name`, function(error, movies){
+        var title = '감상평 남기기';
+        var list = '<br>';
+        var movie_select_list = template.movie_select_list(movies);
+        var html = template.HTML(title, list,
+            `
+            <h2>${title}</h2>
+            <h4>영화의 감상평과 평점을 남기고 공유해보세요!</h4>
+            <form action="/create_record_process" method="post">
            
-            </p>
-           <p1> 평점</p1> <p> </p> 
-            <p><input oninput='ShowSliderValue(this.value)' type="range" name="grade" min="0" max="5" step="0.5">
-            <font size=4 id = "slider_value_view">2.5</font></p>
-            <p1>한줄평 </p1><p> </p> 
-            <p>
-              <textarea class="one_line" name="One_Eval" placeholder="한줄평"  style="border: 1px solid #BBB; color:#444" rows="1" cols="80"></textarea>
-            </p>
-            <p1>감상문 </p1><p> </p> 
-            <p>
-              <textarea class="s_line" name="Eval" placeholder="감상문" style="border: 1px solid #BBB; color:#444" rows="6" cols="80"></textarea>
-            </p>
-            <p>
-            <button type="submit" class="btn">저장하기</button>
-            </p>
-          </form>
-
-          <style>
-          @import url(http://fonts.googleapis.com/earlyaccess/jejugothic.css);
-          @import url('https://fonts.googleapis.com/css?family=Raleway');
-          .one_line{
-            background:#ccc; 
-            padding:1em; 
-            width:50%;
-            height:5em;
-            font-size:1em;
-            line-height:1.5em;
-            vertical-align:middle; 
-            border: none;
-          }
-         .s_line{
-            background:#ccc; 
-            padding:1em; 
-            width:50%;
-            height:20em;
-            font-size:1em;
-            line-height:1.5em;
-            vertical-align:middle; 
-            border: none;
-          }
-          p1{                        
-            font-family: 'Jeju Gothic', serif;
-            font-size:15px;
-          }
-
-          .select {
-            position: relative;
-            display: inline-block;
-            margin-bottom: 15px;
-            width: 50%;
-          }
-          .select select {
-            display: inline-block;
-            width: 100%;
-            cursor: pointer;
-            padding: 10px 15px;
-            outline: 0;
-            border: 0;
-            border-radius: 0;
-            background: #ccc;
-            color: 939393;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-          }
-          .select select::-ms-expand {
-            display: none;
-          }
-          .select select:hover,
-          .select select:focus {
-            color: #000;
-            background: #e6e6e6;
-          }
-          .select__arrow {
-            position: absolute;
-            top: 16px;
-            right: 15px;
-            width: 0;
-            height: 0;
-            pointer-events: none;
-            border-style: solid;
-            border-width: 8px 5px 0 5px;
-            border-color: #7b7b7b transparent transparent transparent;
-          }
-          .select select:hover ~ .select__arrow,
-          .select select:focus ~ .select__arrow {
-            border-top-color: #000;
-          }
-
-         
-          .btn {
-            background-color: #5c5c5c;
-            border: solid 3px #5c5c5c;
-            color: black;
-            padding: 10px 70px;
-            font-size: 15px;
-            font-family: 'Jeju Gothic', serif;
-            position: relative;
-            transition: all 300ms ease-in;
-          }
-          
-          .btn:hover {
-            color: white;
-            cursor: pointer;
-          }
-          
-          .btn:before {
-            content: "";
-            position: absolute;
-            background-color: #e7e5e4;
-            bottom: -1px;
-            left: -2px;
-            right: 100%;
-            top: 0;
-            z-index: -1;
-            transition: right 300ms ease-in;
-          }
-          
-          .btn:hover:before {
-            right: 0;
-          }
-          
-          </style>
-          `,
-          `<br>`,
-          userStatus,
-          '#menu_review'
-      );
-      response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
-      response.end(html);
-    });
+              <input type="hidden" name="id" value="${userStatus}"/>
+             <p1> 영화 목록 </p1>
+              <p>
+              
+              <div class="select">
+                <select name="movie">
+                  <option value="">영화선택</option>
+                  ${movie_select_list}
+                </select>
+                <div class="select__arrow"></div>
+                </div>
+             
+              </p>
+             <p1> 평점</p1> <p> </p> 
+              <p><input oninput='ShowSliderValue(this.value)' type="range" name="grade" min="0" max="5" step="0.5">
+              <font size=4 id = "slider_value_view">2.5</font></p>
+              <p1>한줄평 </p1><p> </p> 
+              <p>
+                <textarea class="one_line" name="One_Eval" placeholder="한줄평"  style="border: 1px solid #BBB; color:#444" rows="1" cols="80"></textarea>
+              </p>
+              <p1>감상문 </p1><p> </p> 
+              <p>
+                <textarea class="s_line" name="Eval" placeholder="감상문" style="border: 1px solid #BBB; color:#444" rows="6" cols="80"></textarea>
+              </p>
+              <p>
+              <button type="submit" class="btn">저장하기</button>
+              </p>
+            </form>
+  
+            <style>
+            .one_line{
+              background:#ccc; 
+              padding:1em; 
+              width:50%;
+              height:5em;
+              font-size:1em;
+              line-height:1.5em;
+              vertical-align:middle; 
+              border: none;
+            }
+           .s_line{
+              background:#ccc; 
+              padding:1em; 
+              width:50%;
+              height:20em;
+              font-size:1em;
+              line-height:1.5em;
+              vertical-align:middle; 
+              border: none;
+            }
+            p1{                        
+              font-family: 'Jeju Gothic', serif;
+              font-size:15px;
+            }
+  
+            .select {
+              position: relative;
+              display: inline-block;
+              margin-bottom: 15px;
+              width: 50%;
+            }
+            .select select {
+              display: inline-block;
+              width: 100%;
+              cursor: pointer;
+              padding: 10px 15px;
+              outline: 0;
+              border: 0;
+              border-radius: 0;
+              background: #ccc;
+              color: 939393;
+              appearance: none;
+              -webkit-appearance: none;
+              -moz-appearance: none;
+            }
+            .select select::-ms-expand {
+              display: none;
+            }
+            .select select:hover,
+            .select select:focus {
+              color: #000;
+              background: #e6e6e6;
+            }
+            .select__arrow {
+              position: absolute;
+              top: 16px;
+              right: 15px;
+              width: 0;
+              height: 0;
+              pointer-events: none;
+              border-style: solid;
+              border-width: 8px 5px 0 5px;
+              border-color: #7b7b7b transparent transparent transparent;
+            }
+            .select select:hover ~ .select__arrow,
+            .select select:focus ~ .select__arrow {
+              border-top-color: #000;
+            }
+            </style>
+            `,
+            `<br>`,
+            userStatus,
+            '#menu_review'
+        );
+        response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
+        response.end(html);
+      });
+    }
   }
   else if(pathname === '/create_record_process'){
     var body = '';
@@ -564,20 +498,8 @@ var app = http.createServer(function(request,response){
             var list = '';
             var html = template.HTML(title, list,
               `<h2>${title}</h2>${description}`,
-              `<a href="/create_record">감상문쓰기</a>
+              `<a href="/create_record" id="log_a">감상문쓰기</a>
               <br>
-              <style>
-              a{
-                text-decoration: none;
-                color: black;
-                font-size: 20px;
-              }
-              a:hover{
-                color: rgb(95, 95, 95);
-                text-decoration: none;
-                font-weight: bold;
-              }
-              </style>
               `,
               userStatus,
               '#menu_review'
@@ -594,20 +516,7 @@ var app = http.createServer(function(request,response){
         var html = template.HTML(title, list,
           `<h2>${title}</h2>${description}`,
           `<br>
-          <a href="/create_record">감상문쓰기</a>
-          
-          <style>
-          a{
-            text-decoration: none;
-            color: black;
-            font-size: 20px;
-          }
-          a:hover{
-            color: rgb(95, 95, 95);
-            text-decoration: none;
-            font-weight: bold;
-          }
-          </style>`,
+          <a href="/create_record" id="log_a">감상문쓰기</a>`,
           userStatus,
           '#menu_review'
         );
@@ -626,69 +535,20 @@ var app = http.createServer(function(request,response){
             <input type="hidden" name="id" value="${queryData.uid}"/>
             <input type="hidden" name="movie" value="${queryData.mid}"/>
             <p1> 평점</p1> <p> </p> 
-            <p><input oninput='ShowSliderValue(this.value)' type="range" name="grade" min="0" max="5" step="0.5">
-            <font size=4 id = "slider_value_view">2.5</font></p>
+            <p><input oninput='ShowSliderValue(this.value)' type="range" name="grade" min="0" max="5" step="0.5" value="${record[0].R_Grade}">
+            <font size=4 id = "slider_value_view">${record[0].R_Grade}</font></p>
             <p1>한줄평 </p1><p> </p> 
             <p>
-              <textarea class="one_line" name="One_Eval" placeholder="한줄평" style="border: 1px solid #BBB; color:#444" rows="1" cols="80"></textarea>
+              <textarea class="one_line" name="One_Eval" style="border: 1px solid #BBB; color:#444" rows="1" cols="80">${record[0].R_One_Eval}</textarea>
             </p>
             <p1>감상문 </p1><p> </p> 
             <p>
-              <textarea class="s_line" name="Eval" placeholder="감상문"  style="border: 1px solid #BBB; color:#444" rows="6" cols="80"></textarea>
+              <textarea class="s_line" name="Eval" style="border: 1px solid #BBB; color:#444" rows="6" cols="80">${record[0].R_Eval}</textarea>
             </p>
             <p>
                <button type="submit" class="btn">감상평 수정</button>
             </p>
           </form>
-          <style>
-          .one_line{
-            background:#ccc; 
-            padding:1em; 
-            width:50%;
-            height:5em;
-            font-size:1em;
-            line-height:1.5em;
-            vertical-align:middle; 
-            border: none;
-          }
-         .s_line{
-            background:#ccc; 
-            padding:1em; 
-            width:50%;
-            height:20em;
-            font-size:1em;
-            line-height:1.5em;
-            vertical-align:middle; 
-            border: none;
-          }
-          .btn {
-            background-color: #5c5c5c;
-            border: solid 3px #5c5c5c;
-            color: black;
-            padding: 10px 70px;
-            font-size: 15px;
-            font-family: 'Jeju Gothic', serif;
-            position: relative;
-            transition: all 300ms ease-in;
-          }
-          
-          .btn:hover {
-            color: white;
-            cursor: pointer;
-          }
-          
-          .btn:before {
-            content: "";
-            position: absolute;
-            background-color: #e7e5e4;
-            bottom: -1px;
-            left: -2px;
-            right: 100%;
-            top: 0;
-            z-index: -1;
-            transition: right 300ms ease-in;
-          }
-          </style>
           `,
           `<br>`,
           userStatus,
@@ -754,20 +614,7 @@ var app = http.createServer(function(request,response){
         var list = '';
         var html = template.HTML(title, list,
           `<h2>${title}</h2>${description}`,
-          `<p></p><a href="/create_record">감상문쓰기</a>
-          <style>
-          a{
-            text-decoration: none;
-            color: black;
-            font-size: 20px;
-          }
-        
-          a:hover{
-            color: rgb(95, 95, 95);
-            text-decoration: none;
-            font-weight: bold;
-          }
-          </style>`,
+          `<p></p><a href="/create_record" id="log_a">감상문쓰기</a>`,
           userStatus,
           '#menu_my'
         );
@@ -793,22 +640,40 @@ var app = http.createServer(function(request,response){
             if(error2){
               throw error2;
             }
-            db.query(`UPDATE MOVIE SET M_AvgGrade = ? WHERE M_ID = ?`, [result2[0].AVG, post.mid], function(error3, result3){
-              if(error3){
-                throw error3;
-              }
-            });
+            if(result2[0].AVG == null){
+              db.query(`UPDATE MOVIE SET M_AvgGrade = ? WHERE M_ID = ?`, [0, post.mid], function(error3, result3){
+                if(error3){
+                  throw error3;
+                }
+              });
+            }
+            else{
+              db.query(`UPDATE MOVIE SET M_AvgGrade = ? WHERE M_ID = ?`, [result2[0].AVG, post.mid], function(error3, result3){
+                if(error3){
+                  throw error3;
+                }
+              });
+            }
           });
   
           db.query(`SELECT SUM(M_RunningTime) AS SUM FROM RECORD INNER JOIN MOVIE ON RECORD.M_ID = MOVIE.M_ID WHERE U_ID = ?`, [post.uid], function(error2, result2){
             if(error2){
               throw error2;
             }
-            db.query(`UPDATE USER SET U_Time = ? WHERE U_ID = ?`, [result2[0].SUM, post.uid], function(error3, result3){
-              if(error3){
-                throw error3;
-              }
-            });
+            if(result2[0].SUM == null){
+              db.query(`UPDATE USER SET U_Time = ? WHERE U_ID = ?`, [0, post.uid], function(error3, result3){
+                if(error3){
+                  throw error3;
+                }
+              });
+            }
+            else{
+              db.query(`UPDATE USER SET U_Time = ? WHERE U_ID = ?`, [result2[0].SUM, post.uid], function(error3, result3){
+                if(error3){
+                  throw error3;
+                }
+              });
+            }
           });
 
           response.writeHead(302, {Location: `/my_record`, 'Content-Type':'text/html; charset=utf-8'});
@@ -832,7 +697,7 @@ var app = http.createServer(function(request,response){
           var html = template.HTML(title, list,
             `
             <h2>내가 영화 본 시간</h2>
-            <h4>총 <a style="color:#5c5c5c"><strong>${description}</strong></a> 분</h4>
+            <h4 style="font-size: 50px; text-shadow: 2px 2px 6px gray;">총 <a style="color:#5c5c5c"><strong>${description}</strong></a> 분</h4>
             <div class="container-fluid">
               <div class="my_if" style="display: inline-block;">
                 <p>라면을 먹었다면</p>
@@ -856,25 +721,6 @@ var app = http.createServer(function(request,response){
                 <p></p>
               </div>
             </div>
-            <style>
-            img{
-              box-shadow:none;
-            }
-            h4{
-        
-            font-size:50px;
-            text-shadow: 2px 2px 6px gray;
-            }
-        
-            h3{
-              font-weight: bolder;
-              text-size:60px;
-              text-shadow: 2px 2px 6px rgba(255, 255, 255, .75);;
-            }
-        
-            
-            </style>
-
             `,
             ``,
             userStatus,
@@ -895,15 +741,15 @@ var app = http.createServer(function(request,response){
         `
         <h2>${title}</h2>
         <br>
-        <form action="/register_process" method="post">
+        <form action="/register_process" method="post" style="font-size:20px; font-family: 'Do Hyeon', sans-serif; font-weight: 300;">
           <h7>아이디 <br></h7>  
-          <p><input type="text" id="id" name="id" placeholder="아이디" style=background:#ccc;></p>
+          <p><input type="text" id="id" name="id" placeholder="id" style="background:#ccc;"></p>
           <h7>비밀번호 <br></h7> 
-          <p><input type="password" id="pwd" name="pwd" placeholder="비밀번호"style=background:#ccc;></p>
+          <p><input type="password" id="pwd" name="pwd" placeholder="****" style="background:#ccc;"></p>
           <h7>이름  <br></h7>
-          <p><input type="text" id="name" name="name" placeholder="이름"style=background:#ccc;></p>
+          <p><input type="text" id="name" name="name" placeholder="홍길동" style="background:#ccc;"></p>
           <h7>성별  <br></h7>
-          <input type="radio" id="male" name="sex" value="1">
+          <input type="radio" id="male" name="sex" value="1" checked>
           <label class="control control--radio" for="male">남
           <div class="control__indicator"></div>
           </label><br>
@@ -912,94 +758,17 @@ var app = http.createServer(function(request,response){
           <div class="control__indicator"></div>
           </label><br>
           <h7>생년월일 <br></h7>
-          <p><input type="date" id="birth" name="birth" placeholder="생년월일"style=background:#ccc;></p>
+          <p><input type="date" id="birth" name="birth" style="background:#ccc; color: rgb(118, 118, 118);"></p>
           <h7> 이메일  <br></h7>
-          <p><input type="email" id="email" name="email" placeholder="이메일"style=background:#ccc;></p>
-          <h7>관심장르 <br></h7>
+          <p><input type="email" id="email" name="email" placeholder="이메일" style="background:#ccc;"></p>
+          <h7>관심장르 </h7><br>
           <p>
-          
             ${list_g}
           </p>
           <p>
           <button type="submit" class="btn">회원가입</button>
           </p>
         </form>
-        <style>
-        h2{        
-          margin-top:20px;
-          font-family: 'Do Hyeon', sans-serif;
-          font-size:60px;}
-
-        .control__indicator {
-          position: absolute;
-          top: 2px;
-          left: 0;
-          height: 20px;
-          width: 20px;
-          background: #e6e6e6;
-        }
-        .control--radio .control__indicator {
-          border-radius: 50%;
-        }
-        .control:hover input ~ .control__indicator,
-        .control input:focus ~ .control__indicator {
-          background: #a3a3a3;
-        }
-        .control input:checked ~ .control__indicator {
-          background: #a3a3a3;
-        }
-        .control__indicator:after {
-          content: '';
-          position: absolute;
-          display: none;
-        }
-        .control input:checked ~ .control__indicator:after {
-          display: block;
-        }
-        .control--checkbox .control__indicator:after {
-          left: 8px;
-          top: 4px;
-          width: 3px;
-          height: 8px;
-          border: solid #fff;
-          border-width: 0 2px 2px 0;
-          transform: rotate(45deg);
-        }
-        h7{
-          font-size:20px;
-          font-family: 'Do Hyeon', sans-serif;
-          font-weight:bolder;
-        }
-        .btn {
-          background-color: #5c5c5c;
-          border: solid 3px #5c5c5c;
-          color: black;
-          padding: 10px 70px;
-          font-size: 15px;
-          font-family: 'Jeju Gothic', serif;
-          position: relative;
-          transition: all 300ms ease-in;
-        }
-        
-        .btn:hover {
-          color: white;
-          cursor: pointer;
-        }
-        
-        .btn:before {
-          content: "";
-          position: absolute;
-          background-color: #e7e5e4;
-          bottom: -1px;
-          left: -2px;
-          right: 100%;
-          top: 0;
-          z-index: -1;
-          transition: right 300ms ease-in;
-        }
-      
-        </style>
-
         `,
         `<br>`
       );
@@ -1040,8 +809,17 @@ var app = http.createServer(function(request,response){
               });
               i = i + 1;
             }
-            response.writeHead(302, {Location: `/login`, 'Content-Type':'text/html; charset=utf-8'});
-            response.end();
+            var title = '회원가입 성공';
+            var description = '회원가입 성공했습니다.';
+            var list = '';
+            var html = template.HTML(title, list,
+              `<h2>${title}</h2>${description}`,
+              `<p></p>
+              <button type="button" onclick="location.href='/login'" class="btn">로그인하러 가기</button>
+              `
+            );
+            response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
+            response.end(html);
           }
           else{
               var title = '회원가입 실패';
@@ -1050,20 +828,8 @@ var app = http.createServer(function(request,response){
               var html = template.HTML(title, list,
                 `<h2>${title}</h2>${description}`,
                 `<p></p>
-                <a href="/register">회원가입</a>
-                <style>
-                a{
-                  text-decoration: none;
-                  color: black;
-                  font-size: 20px;
-                }
-              
-                a:hover{
-                  color: rgb(95, 95, 95);
-                  text-decoration: none;
-                  font-weight: bold;
-                }
-                </style>`
+                <button type="button" onclick="location.href='/register'" class="btn">회원가입</button>
+                `
               );
               response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
               response.end(html);
@@ -1085,120 +851,6 @@ var app = http.createServer(function(request,response){
             <button type="submit" class="btn">Login</button>
           </form>
         </div><!--end log form -->
-   <style>
-   @font-face {
-    font-family: 'Open Sans';
-    font-style: normal;
-    font-weight: 300;
-    src: url(https://fonts.gstatic.com/s/opensans/v18/mem5YaGs126MiZpBA-UN_r8OUuhs.ttf) format('truetype');
-  }
-  @font-face {
-    font-family: 'Open Sans';
-    font-style: normal;
-    font-weight: 400;
-    src: url(https://fonts.gstatic.com/s/opensans/v18/mem8YaGs126MiZpBA-UFVZ0e.ttf) format('truetype');
-  }
-  @font-face {
-    font-family: 'Open Sans';
-    font-style: normal;
-    font-weight: 600;
-    src: url(https://fonts.gstatic.com/s/opensans/v18/mem5YaGs126MiZpBA-UNirkOUuhs.ttf) format('truetype');
-  }
-  @font-face {
-    font-family: 'Open Sans Condensed';
-    font-style: normal;
-    font-weight: 300;
-    src: url(https://fonts.gstatic.com/s/opensanscondensed/v15/z7NFdQDnbTkabZAIOl9il_O6KJj73e7Ff1GhDuXMQg.ttf) format('truetype');
-  }
-  @font-face {
-    font-family: 'Open Sans Condensed';
-    font-style: normal;
-    font-weight: 700;
-    src: url(https://fonts.gstatic.com/s/opensanscondensed/v15/z7NFdQDnbTkabZAIOl9il_O6KJj73e7Ff0GmDuXMQg.ttf) format('truetype');
-  }
-  * {
-    box-sizing: border-box;
-  }
-  .log-form {
-    padding: 0 !important;
-    width: 40%;
-    min-width: 320px;
-    max-width: 475px;
-    background: #fff;
-    -webkit-transform: translate(-10%, -10%);
-    -moz-transform: translate(-10%, -10%);
-    -o-transform: translate(-10%, -10%);
-    -ms-transform: translate(-10%, -10%);
-    transform: translate(-10%, -10%);
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.25);
-  }
-  @media (max-width: 40em) {
-    .log-form {
-      width: 95%;
-      position: relative;
-      margin: 2.5% auto 0 auto;
-      left: 0%;
-      -webkit-transform: translate(0%, 0%);
-      -moz-transform: translate(0%, 0%);
-      -o-transform: translate(0%, 0%);
-      -ms-transform: translate(0%, 0%);
-      transform: translate(0%, 0%);
-    }
-  }
-  .log-form form {
-    display: block;
-    width: 100%;
-    padding: 2em;
-  }
-  .log-form h2 {
-    color: #5d5d5d;
-    font-family: 'open sans condensed';
-    font-size: 1.35em;
-    display: block;
-    background: #2a2a2a;
-    width: 100%;
-    text-transform: uppercase;
-    padding: 0.75em 1em 0.75em 1.5em;
-    box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.05);
-    border: 1px solid #1d1d1d;
-    margin: 0;
-    font-weight: 200;
-  }
-  .log-form input {
-    display: block;
-    margin: auto auto;
-    width: 100%;
-    margin-bottom: 2em;
-    padding: 0.5em 0;
-    border: none;
-    border-bottom: 1px solid #eaeaea;
-    padding-bottom: 1.25em;
-    color: #757575;
-  }
-  .log-form input:focus {
-    outline: none;
-  }
-  .log-form .btn {
-    display: inline-block;
-    background: #404040;
-    padding: 0.5em 2em;
-    color: white;
-    margin-right: 0.5em;
-    box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.2);
-  }
-  .log-form .btn:hover {
-    background: #505050;
-  }
-  .log-form .btn:active {
-    background: #505050;
-    box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.1);
-  }
-  .log-form .btn:focus {
-    outline: none;
-  }
-
-   </style>
-
         `,
         `<br>`
     );
@@ -1222,20 +874,7 @@ var app = http.createServer(function(request,response){
             var list = '';
             var html = template.HTML(title, list,
               `<h2>${title}</h2>${description}`,
-              `<p></p><a href="/login">로그인</a>
-              <style>
-              a{
-                text-decoration: none;
-                color: black;
-                font-size: 20px;
-              }
-            
-              a:hover{
-                color: rgb(95, 95, 95);
-                text-decoration: none;
-                font-weight: bold;
-              }
-              </style>`
+              `<p></p><a href="/login" id="log_a">로그인</a>`
             );
             response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
             response.end(html);
@@ -1251,20 +890,7 @@ var app = http.createServer(function(request,response){
             var list = '';
             var html = template.HTML(title, list,
               `<h2>${title}</h2>${description}`,
-              `<p></p><a href="/login">로그인</a>
-              <style>
-              a{
-                text-decoration: none;
-                color: black;
-                font-size: 20px;
-              }
-            
-              a:hover{
-                color: rgb(95, 95, 95);
-                text-decoration: none;
-                font-weight: bold;
-              }
-              </style>`
+              `<p></p><a href="/login" id="log_a">로그인</a>`
             );
             response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
             response.end(html);
@@ -1286,8 +912,7 @@ var app = http.createServer(function(request,response){
         var html = template.HTML(title, list,
           `
           <form action="/update_interest_process" method="post">
-            <p>${userStatus}님의 관심장르</p>
-            관심장르 : <br>
+            <p>${userStatus}님의 관심장르</p><br>
             <p>
               ${list_i}
             </p>
@@ -1295,36 +920,6 @@ var app = http.createServer(function(request,response){
             <button type="submit" class="btn">수정하기</button>
             </p>
           </form>
-          <style>
-          .btn {
-            background-color: #5c5c5c;
-            border: solid 3px #5c5c5c;
-            color: black;
-            padding: 10px 70px;
-            font-size: 15px;
-            font-family: 'Jeju Gothic', serif;
-            position: relative;
-            transition: all 300ms ease-in;
-          }
-          
-          .btn:hover {
-            color: white;
-            cursor: pointer;
-          }
-          
-          .btn:before {
-            content: "";
-            position: absolute;
-            background-color: #e7e5e4;
-            bottom: -1px;
-            left: -2px;
-            right: 100%;
-            top: 0;
-            z-index: -1;
-            transition: right 300ms ease-in;
-          }
-        
-          </style>
           `,
           `<br>`,
           userStatus
