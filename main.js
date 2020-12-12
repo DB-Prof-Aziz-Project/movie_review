@@ -18,7 +18,11 @@ var app = http.createServer(function(request,response){
   if(pathname === '/'){   //메인페이지
     if(userStatus == ''){     //랜덤 추출 select cid from restaurant order by rand() limit 10
       db.query(`SELECT * FROM MOVIE ORDER BY RAND() LIMIT 6`, function(error, movies){
-        db.query(`SELECT * FROM MOVIE ORDER BY M_AvgGrade DESC LIMIT 6`, function(error3, movies2){
+        db.query(`SELECT MOVIE.M_ID, MOVIE.M_Name, MOVIE.M_Director, MOVIE.M_Poster, MOVIE.M_RelYear, MOVIE.M_Rank, MOVIE.M_RunningTime, MOVIE.M_AvgGrade
+                  FROM MOVIE INNER JOIN RECORD ON MOVIE.M_ID = RECORD.M_ID
+                  GROUP BY RECORD.M_ID
+                  ORDER BY MOVIE.M_AvgGrade DESC, count(RECORD.U_ID) DESC LIMIT 6`, 
+        function(error3, movies2){
           var title = '오늘의 추천영화';
           var description = '오늘의 영화를 추천해드립니다';
           var title2 = '영화 순위 TOP 6';
@@ -58,7 +62,11 @@ var app = http.createServer(function(request,response){
       db.query(`SELECT G_ID FROM INTEREST WHERE U_ID = ? ORDER BY G_ID`, [userStatus], function(error2, interest){
         if(interest == ''){
           db.query(`SELECT * FROM MOVIE ORDER BY RAND() LIMIT 6`, function(error, movies){
-            db.query(`SELECT * FROM MOVIE ORDER BY M_AvgGrade DESC LIMIT 6`, function(error3, movies2){
+            db.query(`SELECT MOVIE.M_ID, MOVIE.M_Name, MOVIE.M_Director, MOVIE.M_Poster, MOVIE.M_RelYear, MOVIE.M_Rank, MOVIE.M_RunningTime, MOVIE.M_AvgGrade
+                      FROM MOVIE INNER JOIN RECORD ON MOVIE.M_ID = RECORD.M_ID
+                      GROUP BY RECORD.M_ID
+                      ORDER BY MOVIE.M_AvgGrade DESC, count(RECORD.U_ID) DESC LIMIT 6`, 
+            function(error3, movies2){
               var title = '나만의 추천영화';
               var description = '회원 가입시 입력한 관심 장르를 기반으로 추천해 드립니다';
               var title2 = '오늘의 추천영화';
@@ -96,7 +104,11 @@ var app = http.createServer(function(request,response){
                 SELECT * FROM MOVIE INNER JOIN BELONG ON MOVIE.M_ID = BELONG.M_ID ${q} ORDER BY RAND() LIMIT 6
                 `, 
                 function(error, movies){
-                  db.query(`SELECT * FROM MOVIE ORDER BY M_AvgGrade DESC LIMIT 6`, function(error3, movies2){
+                  db.query(`SELECT MOVIE.M_ID, MOVIE.M_Name, MOVIE.M_Director, MOVIE.M_Poster, MOVIE.M_RelYear, MOVIE.M_Rank, MOVIE.M_RunningTime, MOVIE.M_AvgGrade
+                            FROM MOVIE INNER JOIN RECORD ON MOVIE.M_ID = RECORD.M_ID
+                            GROUP BY RECORD.M_ID
+                            ORDER BY MOVIE.M_AvgGrade DESC, count(RECORD.U_ID) DESC LIMIT 6`, 
+                  function(error3, movies2){
                     var title = '나만의 추천영화';
                     var description = userStatus + ' 님의 관심 장르를 기반으로 추천해 드립니다';
                     var title2 = '오늘의 추천영화';
