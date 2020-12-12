@@ -958,4 +958,6 @@ update USER, (
 set USER.U_Time = B.sum_r
 where USER.U_ID = B.U_ID;
     
-    
+-- 인덱싱 --
+CREATE INDEX INDEX_MOVIE_NAME ON MOVIE(M_Name);
+CREATE INDEX INDEX_MOVIE_DIRECTOR ON MOVIE(M_Director);
