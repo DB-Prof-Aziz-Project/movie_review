@@ -222,51 +222,111 @@ var app = http.createServer(function(request,response){
   else if(pathname === '/movie'){     //장르별 모아보기 페이지 (여기까지 order by 완료)
     if(queryData.id === undefined){
       if(queryData.category === undefined){
-        db.query(`SELECT * FROM MOVIE ORDER BY M_Name`, function(error, movies){
-          db.query(`SELECT * FROM GENRE ORDER BY G_ID`, function(error2, genres){
-            var title = '장르별 모아보기';
-            var description = '';
-            var list_m = template.movie_list(movies);
-            var list_g = template.genre_list(genres);
-            var html = template.HTML(title, list_m,
-              `
-              <a name="genre_head" />
-              <h2>${title}</h2><h4>${description}</h4><br>
-              ${list_g}
-              `,
-              ``,
-              userStatus,
-              '#menu_genre'
-            );
-            response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
-            response.end(html);
+        if(queryData.sort === 'title'){
+          db.query(`SELECT * FROM MOVIE ORDER BY M_Name`, function(error, movies){
+            db.query(`SELECT * FROM GENRE ORDER BY G_ID`, function(error2, genres){
+              var title = '장르별 모아보기';
+              var description = '';
+              var list_m = template.movie_list(movies);
+              var list_g = template.genre_list(genres, '', queryData.sort);
+              var html = template.HTML(title, list_m,
+                `
+                <a name="genre_head" />
+                <h2>${title}</h2><h4>${description}</h4><br>
+                ${list_g}
+                `,
+                ``,
+                userStatus,
+                '#menu_genre'
+              );
+              response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
+              response.end(html);
+            });
           });
-        });
+        }
+        else{
+          db.query(`SELECT MOVIE.M_ID, MOVIE.M_Name, MOVIE.M_Director, MOVIE.M_Poster, MOVIE.M_RelYear, MOVIE.M_Rank, MOVIE.M_RunningTime, MOVIE.M_AvgGrade
+                    FROM MOVIE INNER JOIN RECORD ON MOVIE.M_ID = RECORD.M_ID
+                    GROUP BY RECORD.M_ID
+                    ORDER BY MOVIE.M_AvgGrade DESC, count(RECORD.U_ID) DESC`,
+          function(error, movies){
+            db.query(`SELECT * FROM GENRE ORDER BY G_ID`, function(error2, genres){
+              var title = '장르별 모아보기';
+              var description = '';
+              var list_m = template.movie_list(movies);
+              var list_g = template.genre_list(genres, '', queryData.sort);
+              var html = template.HTML(title, list_m,
+                `
+                <a name="genre_head" />
+                <h2>${title}</h2><h4>${description}</h4><br>
+                ${list_g}
+                `,
+                ``,
+                userStatus,
+                '#menu_genre'
+              );
+              response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
+              response.end(html);
+            });
+          });
+        }
       }
       else{
-        db.query(`SELECT * FROM MOVIE INNER JOIN BELONG ON MOVIE.M_ID = BELONG.M_ID WHERE BELONG.G_ID = ? ORDER BY M_Name`, [queryData.category], function(error,movies){
-          db.query(`SELECT * FROM GENRE ORDER BY G_ID`, function(error2, genres){
-            var title = '장르별 모아보기';
-            var description = '';
-            var list_m = template.movie_list(movies);
-            var list_g = template.genre_list(genres, queryData.category);
-            var html = template.HTML(title, list_m,
-              `
-              <a name="genre_head" />
-              <h2>${title}</h2>${description}<br>
-              ${list_g}
-              `,
-              ``,
-              userStatus,
-              '#menu_genre'
-            );
-            response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
-            response.end(html);
+        if(queryData.sort === 'title'){
+          db.query(`SELECT * FROM MOVIE INNER JOIN BELONG ON MOVIE.M_ID = BELONG.M_ID WHERE BELONG.G_ID = ? ORDER BY M_Name`, [queryData.category], function(error,movies){
+            db.query(`SELECT * FROM GENRE ORDER BY G_ID`, function(error2, genres){
+              var title = '장르별 모아보기';
+              var description = '';
+              var list_m = template.movie_list(movies);
+              var list_g = template.genre_list(genres, queryData.category, queryData.sort);
+              var html = template.HTML(title, list_m,
+                `
+                <a name="genre_head" />
+                <h2>${title}</h2><h4>${description}</h4><br>
+                ${list_g}
+                `,
+                ``,
+                userStatus,
+                '#menu_genre'
+              );
+              response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
+              response.end(html);
+            });
           });
-        });
+        }
+        else{
+          db.query(`SELECT M2.M_ID, M2.M_Name, M2.M_Director, M2.M_Poster, M2.M_RelYear, M2.M_Rank, M2.M_RunningTime, M2.M_AvgGrade
+                    FROM RECORD INNER JOIN (
+                      SELECT M.M_ID, M.M_Name, M.M_Director, M.M_Poster, M.M_RelYear, M.M_Rank, M.M_RunningTime, M.M_AvgGrade 
+                      FROM MOVIE AS M LEFT JOIN BELONG ON M.M_ID = BELONG.M_ID 
+                      WHERE BELONG.G_ID = ? ) AS M2 
+                    ON M2.M_ID = RECORD.M_ID
+                    GROUP BY RECORD.M_ID
+                    ORDER BY M2.M_AvgGrade DESC, count(RECORD.U_ID) DESC`, [queryData.category],
+          function(error, movies){
+            db.query(`SELECT * FROM GENRE ORDER BY G_ID`, function(error2, genres){
+              var title = '장르별 모아보기';
+              var description = '';
+              var list_m = template.movie_list(movies);
+              var list_g = template.genre_list(genres, queryData.category, queryData.sort);
+              var html = template.HTML(title, list_m,
+                `
+                <a name="genre_head" />
+                <h2>${title}</h2><h4>${description}</h4><br>
+                ${list_g}
+                `,
+                ``,
+                userStatus,
+                '#menu_genre'
+              );
+              response.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
+              response.end(html);
+            });
+          });
+        }
       }
     }
-    else {
+    else {      //영화 자세히 보기 
       db.query(`SELECT * FROM MOVIE WHERE M_ID = ? ORDER BY M_Name`, [queryData.id], function(error,movie){
         var title = movie[0].M_Name;
         var description = '';
