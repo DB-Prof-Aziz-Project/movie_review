@@ -6,9 +6,6 @@ My Movie Storage
 - [![title](https://img.shields.io/badge/DEVLOPER-오병현-123456)](https://github.com/obh3705)
 - [![title](https://img.shields.io/badge/DEVLOPER-윤상은-123456)](https://github.com/Zzangeun)
 
-## Demo
-
-
 ### `npm install -S [아래 리스트 모두 설치]`
 * mysql
 * date-utils
